@@ -16,7 +16,8 @@ const updatedAt = timestamp('updatedAt')
   .notNull()
   .defaultNow()
   .$onUpdate(() => new Date());
-const scheduleDayOfWeekEnum = pgEnum('day', DAYS_OF_WEEK);
+
+export const scheduleDayOfWeekEnum = pgEnum('day', DAYS_OF_WEEK);
 
 export const EventTable = pgTable(
   'events',

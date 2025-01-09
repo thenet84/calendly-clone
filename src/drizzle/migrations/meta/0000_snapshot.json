@@ -1,5 +1,5 @@
 {
-  "id": "7b67efd2-ab47-4b1d-88a5-8e63b7bd3b41",
+  "id": "c96f6639-cb09-4980-bf04-3fd13aa126b3",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -206,7 +206,21 @@
       "isRLSEnabled": false
     }
   },
-  "enums": {},
+  "enums": {
+    "public.day": {
+      "name": "day",
+      "schema": "public",
+      "values": [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday"
+      ]
+    }
+  },
   "schemas": {},
   "sequences": {},
   "roles": {},
