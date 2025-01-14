@@ -10,6 +10,7 @@ import { Button } from '../ui/button';
 import Link from 'next/link';
 import { Textarea } from '../ui/textarea';
 import { Switch } from '../ui/switch';
+import { createEvent } from '@/server/actions/events';
 
 export default function EventForm() {
     const form = useForm<EventFormSchemaType>(
@@ -21,12 +22,21 @@ export default function EventForm() {
             }
         }
     )
-    function onSubmit(values: EventFormSchemaType) {
-        console.log('values: ', values);
+    async function onSubmit(values: EventFormSchemaType) {
+        const data = await createEvent(values);
+
+        if(data?.error) {
+            form.setError('root', {
+                message: 'There was an error saving your event'
+            })
+        }
     }
     return (
         <Form {...form}>
             <form className="flex gap-6 flex-col" onSubmit={form.handleSubmit(onSubmit)}>
+                {form.formState.errors.root && (
+                    <div className="text-destructive text-sm">{form.formState.errors.root.message}</div>
+                )}
                 <FormField control={form.control} name="name" render={({ field }) => (<FormItem>
                     <FormLabel>Event Name</FormLabel>
                     <FormControl>
@@ -55,7 +65,7 @@ export default function EventForm() {
                     <FormItem>
                         <div className="flex gap-2 items-center">
                             <FormControl>
-                                <Switch checked={field.value} onCheckedChange={field.onChange} />
+                                <Switch checked={field.value ?? ''} onCheckedChange={field.onChange} />
                             </FormControl>
                             <FormLabel>Active</FormLabel>
                         </div>
