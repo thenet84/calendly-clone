@@ -1,31 +1,41 @@
 'use client'
 
 import { eventFormSchema, EventFormSchemaType } from '@/schema/events';
-import { useForm } from 'react-hook-form';
+import { createEvent, updateEvent } from '@/server/actions/events';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
+import Link from 'next/link';
+import { useForm } from 'react-hook-form';
+import { Button } from '../ui/button';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
 import { Input } from '../ui/input';
-import { Button } from '../ui/button';
-import Link from 'next/link';
-import { Textarea } from '../ui/textarea';
 import { Switch } from '../ui/switch';
-import { createEvent } from '@/server/actions/events';
+import { Textarea } from '../ui/textarea';
 
-export default function EventForm() {
+type EventFormProps = {
+    event?: {
+        id: string;
+        isActive: boolean;
+        name: string;
+        description?: string;
+        durationInMinutes: number;
+    }
+}
+
+export default function EventForm({ event }: EventFormProps) {
     const form = useForm<EventFormSchemaType>(
         {
             resolver: zodResolver(eventFormSchema),
-            defaultValues: {
+            defaultValues: event ?? {
                 isActive: true,
                 durationInMinutes: 30,
             }
         }
     )
     async function onSubmit(values: EventFormSchemaType) {
-        const data = await createEvent(values);
+        const action = event ? updateEvent.bind(null, event.id) : createEvent;
+        const data = await action(values);
 
-        if(data?.error) {
+        if (data?.error) {
             form.setError('root', {
                 message: 'There was an error saving your event'
             })

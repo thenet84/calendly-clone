@@ -29,7 +29,7 @@ function EventCard({ id, isActive, name, description, durationInMinutes, clerkUs
             <CardFooter className="flex justify-end gap-2 mt-auto">
                 {isActive && <CopyEventButton variant="outline" eventId={id} clerkUserId={clerkUserId} />}
                 <Button asChild>
-                    <Link href={`/events/${id}/edit`}>Edit</Link>
+                    <Link href={`/events/edit/${id}`}>Edit</Link>
                 </Button>
             </CardFooter>
         </Card>
