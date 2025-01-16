@@ -9,6 +9,8 @@ import { auth } from "@clerk/nextjs/server";
 import { CalendarPlus, CalendarRange } from "lucide-react";
 import Link from "next/link";
 
+export const revalidate = 0;
+
 type EventCardProps = {
     id: string;
     isActive: boolean;
