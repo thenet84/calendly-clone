@@ -1,7 +1,7 @@
 'use client'
 
 import { eventFormSchema, EventFormSchemaType } from '@/schema/events';
-import { createEvent, updateEvent } from '@/server/actions/events';
+import { createEvent, deleteEvent, updateEvent } from '@/server/actions/events';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
@@ -10,6 +10,8 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from '../ui/input';
 import { Switch } from '../ui/switch';
 import { Textarea } from '../ui/textarea';
+import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogDescription, AlertDialogTitle, AlertDialogCancel, AlertDialogAction, AlertDialogFooter } from '../ui/alert-dialog';
+import { useTransition } from 'react';
 
 type EventFormProps = {
     event?: {
@@ -22,6 +24,7 @@ type EventFormProps = {
 }
 
 export default function EventForm({ event }: EventFormProps) {
+    const [isDeletePending, startDeleteTransition] = useTransition();
     const form = useForm<EventFormSchemaType>(
         {
             resolver: zodResolver(eventFormSchema),
@@ -31,6 +34,7 @@ export default function EventForm({ event }: EventFormProps) {
             }
         }
     )
+
     async function onSubmit(values: EventFormSchemaType) {
         const action = event ? updateEvent.bind(null, event.id) : createEvent;
         const data = await action(values);
@@ -41,6 +45,19 @@ export default function EventForm({ event }: EventFormProps) {
             })
         }
     }
+
+    async function onDelete() {
+        startDeleteTransition(async () => {
+            const data = await deleteEvent(event?.id ?? '');
+
+            if (data?.error) {
+                form.setError('root', {
+                    message: 'There was an error deleting your event'
+                })
+            }
+        })
+    }
+
     return (
         <Form {...form}>
             <form className="flex gap-6 flex-col" onSubmit={form.handleSubmit(onSubmit)}>
@@ -64,7 +81,7 @@ export default function EventForm({ event }: EventFormProps) {
                     <FormMessage />
                 </FormItem>)} />
                 <FormField control={form.control} name="description" render={({ field }) => (<FormItem>
-                    <FormLabel>Descripton</FormLabel>
+                    <FormLabel>Description</FormLabel>
                     <FormControl>
                         <Textarea className="resize-none h-32" {...field} />
                     </FormControl>
@@ -83,6 +100,24 @@ export default function EventForm({ event }: EventFormProps) {
                         <FormMessage />
                     </FormItem>)} />
                 <div className="flex gap-2 justify-end">
+                    {event && (
+                        <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                                <Button variant="destructiveGhost" disabled={isDeletePending || form.formState.isSubmitting}>Delete</Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                    <AlertDialogDescription>This action cannot be undone. This will permanently delete the event </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction variant="destructive" disabled={isDeletePending || form.formState.isSubmitting} onClick={onDelete}>
+                                        Delete
+                                    </AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>)}
                     <Button type="button" asChild variant='outline'>
                         <Link href="/events">Cancel</Link>
                     </Button>
