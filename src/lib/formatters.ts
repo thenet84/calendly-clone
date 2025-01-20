@@ -11,5 +11,14 @@ export function formatEventDuration(durationInMinutes: number) {
   if (minutes === 0) {
     return hoursString;
   }
-  return `${hoursString} ${minutesString}`
+  return `${hoursString} ${minutesString}`;
+}
+
+export function formatTimezoneOffset(timezone: string) {
+  return new Intl.DateTimeFormat(undefined, {
+    timeZone: timezone,
+    timeZoneName: 'shortOffset',
+  })
+    .formatToParts(new Date())
+    .find((part) => part.type === 'timeZoneName')?.value;
 }

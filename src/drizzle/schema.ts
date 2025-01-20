@@ -19,7 +19,7 @@ const updatedAt = timestamp('updatedAt')
 
 export const scheduleDayOfWeekEnum = pgEnum('day', DAYS_OF_WEEK);
 
-export const EventTable = pgTable(
+export const EventTable = pgTable( 
   'events',
   {
     id: uuid('id').primaryKey().defaultRandom(),
