@@ -48,7 +48,7 @@ export const scheduleFormSchema = z.object({
                 message: "End time must be afer start time",
                 path: [index],
             })
-        } 
+        }  
       });
     }),
 });
