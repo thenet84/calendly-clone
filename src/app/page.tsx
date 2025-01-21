@@ -7,7 +7,7 @@ import { redirect } from "next/navigation";
 
 export default async function HomePage() {
   const { userId } = await auth();
-  console.log('userId: ', userId);
+  
   if(userId !== null) {
     redirect('/events');
   }

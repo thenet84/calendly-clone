@@ -3,7 +3,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { db } from "@/drizzle/db";
 import { auth } from "@clerk/nextjs/server";
 
-export default async function NewEventPage() {
+export const revalidate = 0;
+
+export default async function SchedulePage() {
     const { userId } = await auth();
 
     const schedule = await db.query.ScheduleTable.findFirst({
@@ -12,8 +14,6 @@ export default async function NewEventPage() {
             availabilities: true,
         }
     });
-
-    console.log('schedule', schedule);
 
     return <Card className="max-w-md mx-auto">
         <CardHeader>
